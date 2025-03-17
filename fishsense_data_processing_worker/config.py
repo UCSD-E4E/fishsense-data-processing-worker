@@ -65,8 +65,9 @@ def get_cache_path() -> Path:
     cache_path.mkdir(parents=True, exist_ok=True)
     return cache_path
 
+
 validators = [
-    
+
 ]
 
 settings = Dynaconf(
