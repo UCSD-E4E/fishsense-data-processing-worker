@@ -44,4 +44,4 @@ COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/${PYTHON_PACKAGE} /app/${PYTHON_PACKAGE}
 
 
-ENTRYPOINT ["fsl_spider"]
+ENTRYPOINT ["fsl_worker"]
