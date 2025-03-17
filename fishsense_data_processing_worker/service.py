@@ -8,7 +8,8 @@ import tornado
 from prometheus_client import start_http_server
 
 from fishsense_data_processing_worker.config import configure_logging
-from fishsense_data_processing_worker.handlers import HomePageHandler
+from fishsense_data_processing_worker.handlers import (HomePageHandler,
+                                                       JobHandler)
 from fishsense_data_processing_worker.metrics import system_monitor_thread
 
 
@@ -23,7 +24,8 @@ class Service:
         configure_logging()
 
         self._app = tornado.web.Application([
-            (r'/()', HomePageHandler, {'start_time': start_time})
+            (r'/()', HomePageHandler, {'start_time': start_time}),
+            (r'/process_fsl', JobHandler)
         ])
 
     async def run(self):

@@ -2270,6 +2270,18 @@ files = [
 ]
 
 [[package]]
+name = "schema"
+version = "0.7.7"
+description = "Simple data validation library"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "schema-0.7.7-py2.py3-none-any.whl", hash = "sha256:5d976a5b50f36e74e2157b47097b60002bd4d42e65425fcc9c9befadb4255dde"},
+    {file = "schema-0.7.7.tar.gz", hash = "sha256:7da553abd2958a19dc2547c388cde53398b39196175a9be59ea1caf5ab0a1807"},
+]
+
+[[package]]
 name = "send2trash"
 version = "1.8.3"
 description = "Send file to trash natively under Mac OS X, Windows and Linux"
@@ -2578,4 +2590,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "27863dfd94ce32a0753f3184c6d826ce8b9a758eebd5e18531fbe45d2a1be2c1"
+content-hash = "76bbf0397c2b936b1e81ba9bda425557147039b4c35d1bd1464347973cc9c377"

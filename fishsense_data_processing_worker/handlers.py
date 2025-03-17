@@ -1,12 +1,13 @@
 '''Worker endpoints
 '''
 import datetime as dt
+import json
 from http import HTTPStatus
 
 from tornado.web import RequestHandler
 
 from fishsense_data_processing_worker import __version__
-
+from fishsense_data_processing_worker.jobs import job_schema
 
 # pylint: disable=abstract-method
 # This is a typical behavior for tornado
@@ -32,3 +33,11 @@ class HomePageHandler(RequestHandler):
             f'Fishsense Data Processing Worker v{__version__} deployed at '
             f'{self.__start_time.isoformat()}')
         self.set_status(HTTPStatus.OK)
+
+
+class JobHandler(RequestHandler):
+    SUPPORTED_METHODS = ['PUT']
+
+    async def put(self, *_, **__) -> None:
+        job_request = json.loads(self.request.body)
+        job_schema.validate(job_request)
