@@ -1,5 +1,5 @@
-# Fishsense Data Processing Spider
-This software package shall continuously crawl the data paths specified to collect, identify, and process dive data.
+# Fishsense Data Processing Worker
+This software package shall recieve and execute requests/jobs for processing data
 
 ## Setup
 1. Mount appropriate remote volumes:
