@@ -40,8 +40,8 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENV E4EFS_DOCKER=true
 
 RUN mkdir -p /e4efs/config /e4efs/logs /e4efs/data /e4efs/cache
+COPY sql sql
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/${PYTHON_PACKAGE} /app/${PYTHON_PACKAGE}
-
 
 ENTRYPOINT ["fsl_worker"]

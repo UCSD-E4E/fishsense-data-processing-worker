@@ -19,6 +19,13 @@ __all_summaries: Dict[str, Summary] = {
         labelnames=['endpoint'],
         namespace='e4efs',
         subsystem='worker',
+    ),
+    'query_timing': Summary(
+        name='query_timing',
+        documentation='SQL Query Timings',
+        labelnames=['query'],
+        namespace='e4efs',
+        subsystem='worker'
     )
 }
 __summariess_lock = Lock()
@@ -50,6 +57,13 @@ __all_counters: Dict[str, Counter] = {
         name='queue_get',
         documentation='Items gotten from the queue',
         labelnames=['queue'],
+        namespace='e4efs',
+        subsystem='worker'
+    ),
+    'errors': Counter(
+        name='errors',
+        documentation='Global errors',
+        labelnames=['exception_type', 'context'],
         namespace='e4efs',
         subsystem='worker'
     )

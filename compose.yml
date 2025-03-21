@@ -6,7 +6,7 @@ services:
     container_name: fishsense_data_processing_worker
     volumes:
       # - fishsense_data_reef:/mnt/fishsense_data_reef:ro
-      # - ./settings.toml:/e4efs/config/settings.toml:ro
+      - ./settings.toml:/e4efs/config/settings.toml:ro
       - ./data:/e4efs/data:rw
       - ./logs:/e4efs/logs:rw
       - ./cache:/e4efs/cache:rw

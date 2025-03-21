@@ -1,10 +1,10 @@
 '''Jobs
 '''
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 import schema
 
-from fishsense_data_processing_worker.queue import InstrumentedQueue
+from fishsense_data_processing_worker.queue import InstrumentedQueue, Queue
 
 __preprocess_schema = schema.Schema({
     'display_name': str,
@@ -37,5 +37,5 @@ job_schema = schema.Schema({
     )]
 })
 
-job_ingress_queue: InstrumentedQueue[Dict[str, Any]] = InstrumentedQueue(
+job_ingress_queue: Queue[Tuple[str, Dict[str, Any]]] = InstrumentedQueue(
     name='job_ingress')

@@ -1758,6 +1758,18 @@ files = [
 ]
 
 [[package]]
+name = "pycron"
+version = "3.1.2"
+description = "Simple cron-like parser, which determines if current datetime matches conditions."
+optional = false
+python-versions = "<4.0,>=3.9"
+groups = ["main"]
+files = [
+    {file = "pycron-3.1.2-py3-none-any.whl", hash = "sha256:30e4a01889dfb471e80cc76a5c0ab87e675146a7f6d2d66a2e4bdb4e2975ef3d"},
+    {file = "pycron-3.1.2.tar.gz", hash = "sha256:114c71bc61002b850a416e33e72a8c6de75b9f5c4228e86d7babd8a7ea232d94"},
+]
+
+[[package]]
 name = "pygments"
 version = "2.19.1"
 description = "Pygments is a syntax highlighting package written in Python."
@@ -2590,4 +2602,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "76bbf0397c2b936b1e81ba9bda425557147039b4c35d1bd1464347973cc9c377"
+content-hash = "65fa3f37e192062e281fe7b3f2747c358c4c00a61e2a4436737f2488af22444c"

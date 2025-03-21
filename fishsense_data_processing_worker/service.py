@@ -7,9 +7,11 @@ import pytz
 import tornado
 from prometheus_client import start_http_server
 
-from fishsense_data_processing_worker.config import configure_logging
+from fishsense_data_processing_worker.config import configure_logging, settings
+from fishsense_data_processing_worker.core import Core
 from fishsense_data_processing_worker.handlers import (HomePageHandler,
-                                                       JobHandler)
+                                                       JobHandler,
+                                                       VersionHandler)
 from fishsense_data_processing_worker.metrics import system_monitor_thread
 
 
@@ -25,8 +27,11 @@ class Service:
 
         self._app = tornado.web.Application([
             (r'/()', HomePageHandler, {'start_time': start_time}),
-            (r'/process_fsl()', JobHandler)
+            (r'/process_fsl()', JobHandler),
+            (r'/version()', VersionHandler)
         ])
+
+        self.core = Core(db=settings.core.db)
 
     async def run(self):
         """Main entry point
@@ -34,8 +39,11 @@ class Service:
         start_http_server(9090)
         system_monitor_thread.start()
         self._app.listen(80)
+        self.core.start()
 
         await self.stop_event.wait()
+
+        self.core.stop()
 
 
 def main() -> None:

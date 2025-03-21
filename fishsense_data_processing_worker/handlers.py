@@ -4,7 +4,7 @@ import datetime as dt
 import hashlib
 import json
 from http import HTTPStatus
-
+from importlib.metadata import version
 from tornado.web import RequestHandler
 
 from fishsense_data_processing_worker import __version__
@@ -94,13 +94,28 @@ class JobHandler(OpenAPICompatibleHandler):
         cksums = []
         for job in jobs:
             cksum = hashlib.md5()
-            job_ingress_queue.put(job)
             cksum.update(json.dumps(job,
                                     separators=(',', ':'),
                                     indent=None,
                                     sort_keys=True).encode())
-            cksums.append(cksum.hexdigest())
+            digest = cksum.hexdigest()
+            cksums.append(digest)
+            job_ingress_queue.put((digest, job))
         result = {
             'job_ids': cksums
         }
         self.write(json.dumps(result))
+
+
+class VersionHandler(OpenAPICompatibleHandler):
+    """Version Handler
+
+    """
+    SUPPORTED_METHODS = ('GET', 'OPTIONS')
+
+    async def get(self, *_, **__) -> None:
+        """Gets the version information for this app
+        """
+        self.write(json.dumps({
+            'version': version('fishsense_data_processing_worker')
+        }))
