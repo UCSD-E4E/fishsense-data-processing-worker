@@ -96,6 +96,9 @@ components:
                     type: string
                   format:
                     type: string
+                    enum:
+                      - JPG
+                      - PNG
                   output:
                     type: string
 

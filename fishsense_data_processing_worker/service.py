@@ -25,7 +25,7 @@ class Service:
 
         self._app = tornado.web.Application([
             (r'/()', HomePageHandler, {'start_time': start_time}),
-            (r'/process_fsl', JobHandler)
+            (r'/process_fsl()', JobHandler)
         ])
 
     async def run(self):

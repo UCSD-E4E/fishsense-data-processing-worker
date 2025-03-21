@@ -12,11 +12,48 @@ __all_gauges: Dict[str, Gauge] = {}
 __gauges_lock = Lock()
 __all_infos: Dict[str, Info] = {}
 __infos_lock = Lock()
-__all_summaries: Dict[str, Summary] = {}
+__all_summaries: Dict[str, Summary] = {
+    'request_timing': Summary(
+        name='request_timing',
+        documentation='Request timing',
+        labelnames=['endpoint'],
+        namespace='e4efs',
+        subsystem='worker',
+    )
+}
 __summariess_lock = Lock()
 __all_histograms: Dict[str, Histogram] = {}
 __histograms_lock = Lock()
-__all_counters: Dict[str, Counter] = {}
+__all_counters: Dict[str, Counter] = {
+    'request_call': Counter(
+        name='request_call',
+        documentation='Request count',
+        labelnames=['endpoint'],
+        namespace='e4efs',
+        subsystem='worker'
+    ),
+    'request_result': Counter(
+        name='request_result',
+        documentation='Request result',
+        labelnames=['endpoint', 'code'],
+        namespace='e4efs',
+        subsystem='worker'
+    ),
+    'queue_put': Counter(
+        name='queue_put',
+        documentation='Items put into the queue',
+        labelnames=['queue'],
+        namespace='e4efs',
+        subsystem='worker'
+    ),
+    'queue_get': Counter(
+        name='queue_get',
+        documentation='Items gotten from the queue',
+        labelnames=['queue'],
+        namespace='e4efs',
+        subsystem='worker'
+    )
+}
 __counters_lock = Lock()
 
 
@@ -48,7 +85,7 @@ def get_histogram(name: str,
 
 
 def get_summary(name: str,
-                documentation: str,
+                documentation: str = '',
                 labelnames: Iterable[str] = (),
                 namespace: str = '',
                 subsystem: str = '',
@@ -72,7 +109,7 @@ def get_summary(name: str,
 
 
 def get_counter(name: str,
-                documentation: str,
+                documentation: str = '',
                 labelnames: Iterable[str] = (),
                 namespace: str = '',
                 subsystem: str = '',
@@ -97,7 +134,7 @@ def get_counter(name: str,
 
 
 def get_gauge(name: str,
-              documentation: str,
+              documentation: str = '',
               labelnames: Iterable[str] = (),
               namespace: str = '',
               subsystem: str = '',
@@ -125,7 +162,7 @@ def get_gauge(name: str,
 
 
 def get_info(name: str,
-             documentation: str,
+             documentation: str = '',
              labelnames: Iterable[str] = (),
              namespace: str = '',
              subsystem: str = '',
