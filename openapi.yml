@@ -39,15 +39,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JobResult'
+                $ref: '#/components/schemas/JobIds'
         '400':
           description: Invalid input
         '422':
           description: Validation exception
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
+      # security:
+      #   - petstore_auth:
+      #       - write:pets
+      #       - read:pets
   /job_status:
     get:
       tags:
@@ -60,13 +60,14 @@ paths:
 
 components:
   schemas:
-    JobResult:
+    JobIds:
       type: object
       properties:
-        id:
-          type: string
-        status:
-          type: string
+        job_ids:
+          type: array
+          items:
+            type: string
+            description: Job IDs
     JobDefinition:
       type: object
       properties:
@@ -79,6 +80,9 @@ components:
                 type: string
               job_name:
                 type: string
+                enum:
+                  - preprocess
+                  - preprocess_with_laser
               parameters:
                 type: object
                 properties:

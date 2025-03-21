@@ -1,13 +1,15 @@
 '''Worker endpoints
 '''
 import datetime as dt
+import hashlib
 import json
 from http import HTTPStatus
 
 from tornado.web import RequestHandler
 
 from fishsense_data_processing_worker import __version__
-from fishsense_data_processing_worker.jobs import job_schema
+from fishsense_data_processing_worker.jobs import job_ingress_queue, job_schema
+
 
 # pylint: disable=abstract-method
 # This is a typical behavior for tornado
@@ -36,8 +38,27 @@ class HomePageHandler(RequestHandler):
 
 
 class JobHandler(RequestHandler):
+    """Job Handler
+    """
     SUPPORTED_METHODS = ['PUT']
 
     async def put(self, *_, **__) -> None:
+        """Puts a new job into the job queue
+        """
         job_request = json.loads(self.request.body)
         job_schema.validate(job_request)
+
+        jobs = job_request['job']
+        cksums = []
+        for job in jobs:
+            cksum = hashlib.md5()
+            job_ingress_queue.put(job)
+            cksum.update(json.dumps(job,
+                                    separators=(',', ':'),
+                                    indent=None,
+                                    sort_keys=True).encode())
+            cksums.append(cksum.hexdigest())
+        result = {
+            'job_ids': cksums
+        }
+        self.write(json.dumps(result))
