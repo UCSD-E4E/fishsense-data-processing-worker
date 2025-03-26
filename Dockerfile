@@ -1,21 +1,26 @@
-FROM python:3.12-slim AS builder
+# Copied from https://github.com/UCSD-E4E/fishsense-lite/blob/c545a0df7fe0be957b839bd41086b0aa64976d67/runtime/Dockerfile
+FROM ghcr.io/ucsd-e4e/fishsense:cuda
 
-# --- Install Poetry ---
-ARG POETRY_VERSION=2.1
+SHELL ["/bin/bash", "-c"]
 
-ENV POETRY_HOME=/opt/poetry
-ENV POETRY_NO_INTERACTION=1
-ENV POETRY_VIRTUALENVS_IN_PROJECT=1
-ENV POETRY_VIRTUALENVS_CREATE=1
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+RUN mkdir -p ~/.ssh && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
-ENV PYTHON_PACKAGE=fishsense_data_processing_worker
-# Tell Poetry where to place its cache and virtual environment
-ENV POETRY_CACHE_DIR=/opt/.cache
+RUN . ${HOME}/.cargo/env && pip install git+https://github.com/UCSD-E4E/fishsense-lite.git
 
-RUN pip install "poetry==${POETRY_VERSION}"
+ARG MAX_CPU=1
+ARG MAX_GPU=1
 
+RUN ${HOME}/.pyenv/shims/fsl generate-ray-config --max-cpu ${MAX_CPU} --max-gpu ${MAX_GPU}
+
+USER root
+ARG GID=1001
+ARG UID=1001
+ARG CUDA_GROUP_ID=65533
+RUN groupmod -g ${GID} ubuntu && usermod -u ${UID} -g ${GID} ubuntu && groupadd -g ${CUDA_GROUP_ID} cuda
+RUN sudo usermod -aG cuda ubuntu
+USER ubuntu
+
+USER root
 WORKDIR /app
 
 # --- Reproduce the environment ---
@@ -31,17 +36,12 @@ COPY README.md /app/README.md
 COPY ${PYTHON_PACKAGE} /app/${PYTHON_PACKAGE}
 RUN poetry install --only main
 
-# Now let's build the runtime image from the builder.
-#   We'll just copy the env and the PATH reference.
-FROM python:3.12-slim AS runtime
-
 ENV VIRTUAL_ENV=/app/.venv
 ENV PATH="/app/.venv/bin:$PATH"
 ENV E4EFS_DOCKER=true
 
 RUN mkdir -p /e4efs/config /e4efs/logs /e4efs/data /e4efs/cache
 COPY sql sql
-COPY --from=builder /app/.venv /app/.venv
-COPY --from=builder /app/${PYTHON_PACKAGE} /app/${PYTHON_PACKAGE}
-
+USER ubuntu
 ENTRYPOINT ["fsl_worker"]
+
