@@ -1,106 +1,165 @@
-'''Core logic
+'''Core thread
 '''
-import contextlib
+import datetime as dt
 import json
 import logging
-import sqlite3
+import subprocess
+from http import HTTPStatus
 from pathlib import Path
-from queue import Empty
+from tempfile import TemporaryDirectory
 from threading import Event, Thread
+from typing import Callable, Dict, List, Optional
 
-from fishsense_data_processing_worker.jobs import job_ingress_queue
-from fishsense_data_processing_worker.metrics import add_thread_to_monitor, get_counter
-from fishsense_data_processing_worker.sql import do_query, do_script
+import requests
 
-class UnknownJobTypeException(RuntimeError):
-    """Unknown Job Type Exception
-    """
+from fishsense_data_processing_worker.downloader import Downloader
+from fishsense_data_processing_worker.metrics import add_thread_to_monitor
+
+
 class Core:
-    """Core logic
-    """
-    TABLE_MAPPING = {
-        'preprocess': Path('sql/insert_new_preprocess_job.sql'),
-        'preprocess_with_laser': Path('sql/insert_new_preprocess_with_laser_job.sql')
-    }
-    def __init__(self, db: Path = Path('./data/jobs.db')):
+    def __init__(self,
+                 orchestrator: str,
+                 api_key: str,
+                 worker_name: str,
+                 downloader: Downloader
+                 ):
+        self._log = logging.getLogger('Core')
+        self.__host = orchestrator
+        self.__key = api_key
+        self._worker_name = worker_name
+        self._downloader = downloader
         self.stop_event = Event()
-        self.__db = db
-        db.parent.mkdir(parents=True, exist_ok=True)
 
-        self.__initialize_db()
-        self.__ingest_thread = Thread(
-            target=self.ingest_thread,
-            name='Job Ingest Thread'
+        self._n_images: int = 3
+
+        self._worker_thread = Thread(
+            target=self._process_loop,
+            name='process_worker'
         )
-        add_thread_to_monitor(self.__ingest_thread)
+        add_thread_to_monitor(self._worker_thread)
 
-        self.__process_thread = Thread(
-            target=self.process_thread,
-            name='Job Process Thread'
-        )
-        add_thread_to_monitor(self.__process_thread)
+        self._operation_map: Dict[str,
+                                  Callable[[str, List[str], int, Optional[str]], None]] = {
+            'preprocess': self._preprocess
+        }
 
-    def __initialize_db(self):
-        with contextlib.closing(sqlite3.connect(self.__db)) as con, \
-                contextlib.closing(con.cursor()) as cur:
-            do_script(
-                path='sql/initialize_db.sql',
-                cur=cur
+    def _process_loop(self):
+        while not self.stop_event.is_set():
+            # Get next set of jobs
+            with requests.Session() as session:
+                retrieve_batch_url = f'{self.__host}/api/v1/jobs/retrieve_batch'
+                response = session.post(
+                    url=retrieve_batch_url,
+                    headers={
+                        'api_key': self.__key
+                    },
+                    params={
+                        'nImages': self._n_images,
+                        'worker': self._worker_name,
+                        'expiration': int((dt.datetime.now() + dt.timedelta(minutes=10)).timestamp())
+                    }
+                )
+                if response.status_code != HTTPStatus.OK:
+                    self._log.error('Failed to retrieve %s: %d',
+                                    retrieve_batch_url, response.status_code)
+                    raise RuntimeError
+                job_definition: Dict = response.json()
+                jobs: List[Dict] = job_definition['jobs']
+                for job in jobs:
+                    job_id: str = job['jobId']
+                    frame_ids: List[str] = job['frameIds']
+                    camera_id: int = job['cameraId']
+                    dive_id: Optional[str] = job['diveId']
+
+                    operation: str = job['operation']
+
+                    self._log.debug('Got job %s to %s frames %s on camera %s, dive %s',
+                                    job_id,
+                                    operation,
+                                    frame_ids,
+                                    camera_id,
+                                    dive_id
+                                    )
+
+                    process_fn = self._operation_map[operation]
+
+                    self._log.debug('Using fn %s', process_fn.__name__)
+                    try:
+                        process_fn(job_id, frame_ids, camera_id, dive_id)
+                    except Exception as exc:
+                        self._log.exception('Failed: %s', exc)
+                        session.put(
+                            url=f'{self.__host}/api/v1/jobs/status',
+                            params={
+                                'jobId': job_id,
+                                # TODO switch to failed later, this only for dev
+                                'status': 'cancelled'
+                            },
+                            headers={
+                                'api_key': self.__key
+                            }
+                        )
+                        raise exc
+
+    def _preprocess(self, job_id: str, frame_ids: List[str], camera_id: int, dive_id: Optional[str]):
+        raw_urls = [
+            f'{self.__host}/api/v1/data/raw/{frame_id}' for frame_id in frame_ids]
+        request_headers = {
+            'api_key': self.__key
+        }
+        lens_cal_url = f'{self.__host}/api/v1/data/lens_cal/{camera_id}'
+        with TemporaryDirectory() as raw_files_dir, \
+                TemporaryDirectory() as lens_cal_dir, \
+                TemporaryDirectory() as job_dir, \
+                TemporaryDirectory() as output_dir:
+            raw_files = Path(raw_files_dir)
+            lens_cal_path = Path(lens_cal_dir)
+            output_path = Path(output_dir)
+            job_dir_path = Path(job_dir)
+            raw_file_paths = self._downloader.download_urls(
+                urls=raw_urls,
+                request_headers=request_headers,
+                working_dir=raw_files
             )
-            con.commit()
+            lens_cal_paths = self._downloader.download_urls(
+                urls=[lens_cal_url],
+                request_headers=request_headers,
+                working_dir=lens_cal_path
+            )
+            job_document = {
+                'jobs': [
+                    {
+                        'display_name': job_id,
+                        'job_name': 'preprocess',
+                        'parameters': {
+                            'data': [path.as_posix() for path in raw_file_paths.values()],
+                            'lens-calibration': lens_cal_paths[lens_cal_url].as_posix(),
+                            'format': 'JPG',
+                            'output': output_path.as_posix()
+                        }
+                    }
+                ]
+            }
+            self._log.info('Executing job %s', job_document)
+            job_path = job_dir_path / 'job.json'
+            with open(job_path, 'w', encoding='utf-8') as handle:
+                json.dump(job_document, handle)
+
+            result = subprocess.run(
+                ['fsl', 'run-jobs', job_path.as_posix()],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                check=False
+            )
+            self._log.debug('Subprocess output: %s', result.stdout.decode())
+            result.check_returncode()
+            self._log.debug('Input dir: %s', list(raw_files.glob('*.ORF')))
+            self._log.debug('Output dir: %s', list(output_path.glob('*.JPG')))
+            raise NotImplementedError
 
     def start(self):
-        """Starts core threads
-        """
-        self.__ingest_thread.start()
-        self.__process_thread.start()
+        self._worker_thread.start()
 
     def stop(self):
-        """Stops core threads
-        """
         self.stop_event.set()
-        self.__process_thread.join()
-        self.__ingest_thread.join()
-
-    def process_thread(self) -> None:
-        """Processes jobs
-        """
-        __log = logging.getLogger('Job Process Thread')
-        try:
-            while not self.stop_event.is_set():
-                pass
-        except Exception as exc: # pylint: disable=broad-except
-            __log.exception('Job Process Thread failed due to %s', exc)
-            get_counter('errors').labels(exception_type=type(exc).__name__,
-                                         context='Job Process Thread').inc()
-    def ingest_thread(self) -> None:
-        """Ingests jobs
-        """
-        __log = logging.getLogger('Job Ingest Thread')
-        try:
-            while not self.stop_event.is_set():
-                try:
-                    digest, job = job_ingress_queue.get(timeout=5)
-                except Empty:
-                    continue
-                job_type = job['job_name']
-                if job_type not in self.TABLE_MAPPING:
-                    raise UnknownJobTypeException
-                with contextlib.closing(sqlite3.connect(self.__db)) as con, \
-                        contextlib.closing(con.cursor()) as cur:
-                    do_query(
-                        path=self.TABLE_MAPPING[job_type],
-                        cur=cur,
-                        params={
-                            'cksum': digest,
-                            'parameters': json.dumps(job,
-                                                    separators=(',', ':'),
-                                                    indent=None,
-                                                    sort_keys=True)
-                        }
-                    )
-                    con.commit()
-        except Exception as exc: # pylint: disable=broad-except
-            __log.exception('Job Ingest Thread failed due to %s', exc)
-            get_counter('errors').labels(exception_type=type(exc).__name__,
-                                         context='Job Ingest Thread').inc()
+        self._worker_thread.join()

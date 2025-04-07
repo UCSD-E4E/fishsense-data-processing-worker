@@ -1,6 +1,5 @@
 '''Config
 '''
-import pycron
 import logging
 import logging.handlers
 import os
@@ -9,6 +8,7 @@ from pathlib import Path
 from typing import Dict
 
 import platformdirs
+import pycron
 from dynaconf import Dynaconf, Validator
 
 IS_DOCKER = os.environ.get('E4EFS_DOCKER', False)
@@ -74,6 +74,21 @@ validators = [
     ),
     Validator(
         'core.cron',
+        cast=str
+    ),
+    Validator(
+        'core.orchestrator',
+        cast=str,
+        required=True
+    ),
+    Validator(
+        'core.api_key',
+        required=True,
+        cast=str
+    ),
+    Validator(
+        'core.worker_name',
+        required=True,
         cast=str
     )
 ]

@@ -10,7 +10,7 @@ services:
       - ./data:/e4efs/data:rw
       - ./logs:/e4efs/logs:rw
       - ./cache:/e4efs/cache:rw
-      # - ./.secrets.toml:/.secrets.toml:ro
+      - ./.secrets.toml:/e4efs/config/.secrets.toml:ro
     # environment:
     ports:
       - 9090:9090 # prometheus
@@ -20,10 +20,15 @@ services:
       resources:
         limits:
           memory: 4G
-
-
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
 # secrets:
 
 # volumes:
   # fishsense_data_reef:
   #  external: true
+  

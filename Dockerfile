@@ -3,6 +3,13 @@ FROM ghcr.io/ucsd-e4e/fishsense:cuda
 
 SHELL ["/bin/bash", "-c"]
 
+USER root
+ARG GID=1001
+ARG UID=1001
+ARG CUDA_GROUP_ID=65533
+RUN groupmod -g ${GID} ubuntu && usermod -u ${UID} -g ${GID} ubuntu && groupadd -g ${CUDA_GROUP_ID} cuda
+RUN sudo usermod -aG cuda ubuntu
+
 RUN mkdir -p ~/.ssh && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
 RUN . ${HOME}/.cargo/env && pip install git+https://github.com/UCSD-E4E/fishsense-lite.git
@@ -12,15 +19,7 @@ ARG MAX_GPU=1
 
 RUN ${HOME}/.pyenv/shims/fsl generate-ray-config --max-cpu ${MAX_CPU} --max-gpu ${MAX_GPU}
 
-USER root
-ARG GID=1001
-ARG UID=1001
-ARG CUDA_GROUP_ID=65533
-RUN groupmod -g ${GID} ubuntu && usermod -u ${UID} -g ${GID} ubuntu && groupadd -g ${CUDA_GROUP_ID} cuda
-RUN sudo usermod -aG cuda ubuntu
-USER ubuntu
 
-USER root
 WORKDIR /app
 
 # --- Reproduce the environment ---
