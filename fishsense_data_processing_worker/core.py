@@ -124,7 +124,8 @@ class Core:
             lens_cal_paths = self._downloader.download_urls(
                 urls=[lens_cal_url],
                 request_headers=request_headers,
-                working_dir=lens_cal_path
+                working_dir=lens_cal_path,
+                suffix='.pkg'
             )
             job_document = {
                 'jobs': [
@@ -140,10 +141,11 @@ class Core:
                     }
                 ]
             }
-            self._log.info('Executing job %s', job_document)
             job_path = job_dir_path / 'job.json'
             with open(job_path, 'w', encoding='utf-8') as handle:
-                json.dump(job_document, handle)
+                document = json.dumps(job_document, indent=2)
+                handle.write(document)
+            self._log.info('Executing job %s', document)
 
             result = subprocess.run(
                 ['fsl', 'run-jobs', job_path.as_posix()],
@@ -153,8 +155,18 @@ class Core:
             )
             self._log.debug('Subprocess output: %s', result.stdout.decode())
             result.check_returncode()
-            self._log.debug('Input dir: %s', list(raw_files.glob('*.ORF')))
             self._log.debug('Output dir: %s', list(output_path.glob('*.JPG')))
+            for output_file in output_path.glob('*.JPG'):
+                cksum = output_file.stem
+                with open(output_file, 'rb') as handle, requests.Session() as session:
+                    response = session.put(
+                        url=f'{self.__host}/api/v1/data/preprocess_jpeg/{cksum}',
+                        headers={
+                            'api_key': self.__key
+                        },
+                        data=handle.read()
+                    )
+                    response.raise_for_status()
             raise NotImplementedError
 
     def start(self):
