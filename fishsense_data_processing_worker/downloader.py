@@ -74,7 +74,8 @@ class Downloader:
                       urls: List[str],
                       request_headers: Dict[str, str],
                       working_dir: Path,
-                      timeout: float = None
+                      timeout: float = None,
+                      suffix: str = '.ORF'
                       ) -> Dict[str, Path]:
         """Downloads the specified URLs.
 
@@ -84,6 +85,7 @@ class Downloader:
             working_dir (Path): Directory in which to store the downloaded files
             timeout (float): Seconds to wait for download to complete.  Defaults to None (wait 
                 forever).
+            suffix (str): Suffix to use.  Defaults to '.ORF'.
 
         Returns:
             Dict[str, Path]: Output mapping of url to downloaded file
@@ -94,7 +96,7 @@ class Downloader:
         for url in urls:
             url_parts = urlparse(url)
             url_path = Path(url_parts.path)
-            output_path = (working_dir / url_path.name).with_suffix('.ORF')
+            output_path = (working_dir / url_path.name).with_suffix(suffix)
             if output_path in job_output_map:
                 self._log.warning('Multiple paths overlap! %s', output_path)
             if output_path.exists():
