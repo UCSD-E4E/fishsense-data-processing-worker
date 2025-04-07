@@ -30,7 +30,7 @@ class Core:
         self._downloader = downloader
         self.stop_event = Event()
 
-        self._n_images: int = 3
+        self._n_images: int = 30
 
         self._worker_thread = Thread(
             target=self._process_loop,
@@ -156,18 +156,30 @@ class Core:
             self._log.debug('Subprocess output: %s', result.stdout.decode())
             result.check_returncode()
             self._log.debug('Output dir: %s', list(output_path.glob('*.JPG')))
-            for output_file in output_path.glob('*.JPG'):
-                cksum = output_file.stem
-                with open(output_file, 'rb') as handle, requests.Session() as session:
-                    response = session.put(
-                        url=f'{self.__host}/api/v1/data/preprocess_jpeg/{cksum}',
-                        headers={
-                            'api_key': self.__key
-                        },
-                        data=handle.read()
-                    )
-                    response.raise_for_status()
-            raise NotImplementedError
+            with requests.Session() as session:
+                for output_file in output_path.glob('*.JPG'):
+                    cksum = output_file.stem
+                    with open(output_file, 'rb') as handle:
+                        response = session.put(
+                            url=f'{self.__host}/api/v1/data/preprocess_jpeg/{cksum}',
+                            headers={
+                                'api_key': self.__key
+                            },
+                            data=handle.read()
+                        )
+                        response.raise_for_status()
+                session.put(
+                    url=f'{self.__host}/api/v1/jobs/status',
+                    headers={
+                        'api_key': self.__key
+                    },
+                    params={
+                        'jobId': job_id,
+                        'status': 'completed',
+                        'progress': 100
+                    }
+                ).raise_for_status()
+
 
     def start(self):
         self._worker_thread.start()
