@@ -16,10 +16,11 @@ services:
       - 9090:9090 # prometheus
       - 8080:80 # http
     # secrets:
+    shm_size: 10.24gb
     deploy:
       resources:
         limits:
-          memory: 4G
+          memory: 8G
         reservations:
           devices:
             - driver: nvidia
