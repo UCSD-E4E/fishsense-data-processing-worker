@@ -12,7 +12,9 @@ RUN sudo usermod -aG cuda ubuntu
 
 RUN mkdir -p ~/.ssh && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
-RUN . ${HOME}/.cargo/env && pip install git+https://github.com/UCSD-E4E/fishsense-lite.git
+ADD https://github.com/UCSD-E4E/fishsense-lite.git /fishsense-lite
+WORKDIR /fishsense-lite
+RUN . ${HOME}/.cargo/env && pip install .
 
 ARG MAX_CPU=1
 ARG MAX_GPU=1
