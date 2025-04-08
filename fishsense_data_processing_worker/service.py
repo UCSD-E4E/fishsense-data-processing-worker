@@ -30,7 +30,7 @@ class Service:
             worker_name=settings.core.worker_name,
             downloader=self._downloader
         )
-        signal.signal(signal.SIGINT, self.stop_event.set)
+        signal.signal(signal.SIGTERM, self.stop_event.set)
 
     def run(self):
         """Main entry point
