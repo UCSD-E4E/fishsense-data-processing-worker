@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Dict
 
 import platformdirs
-import pycron
 from dynaconf import Dynaconf, Validator
 
 IS_DOCKER = os.environ.get('E4EFS_DOCKER', False)
