@@ -12,8 +12,7 @@ RUN sudo usermod -aG cuda ubuntu
 
 RUN mkdir -p ~/.ssh && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
-RUN --mount=type=cache,target=/tmp/git_cache/ \
-    git clone --depth=1 https://github.com/UCSD-E4E/fishsense-lite.git /tmp/git_cache/fishsense-lite/; \
+RUN git clone --depth=1 https://github.com/UCSD-E4E/fishsense-lite.git /tmp/git_cache/fishsense-lite/; \
     cd /tmp/git_cache/fishsense-lite/ && git pull && cp -r ./ /tmp/fishsense-lite/
 
 WORKDIR /tmp/fishsense-lite
