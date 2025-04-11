@@ -28,6 +28,7 @@ class Downloader:
         self._job_pickup_queue: Queue[Tuple[str, Dict[str, str], Path]] = Queue()
         self._log = logging.getLogger('Downloader')
         self.workers_ready = Event()
+        self._workers: List[Thread] = []
 
     def _download_worker(self):
         thread_handle = current_thread()
@@ -90,6 +91,7 @@ class Downloader:
         Returns:
             Dict[str, Path]: Output mapping of url to downloaded file
         """
+        # pylint: disable=too-many-arguments, too-many-positional-arguments
         if not self.workers_ready.is_set():
             raise RuntimeError('Download works not running!')
         job_output_map: Dict[Path, str] = {}
