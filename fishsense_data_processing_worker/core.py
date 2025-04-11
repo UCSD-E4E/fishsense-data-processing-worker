@@ -312,7 +312,6 @@ class Core:
                     }
                 ).raise_for_status()
 
-
     def start(self):
         """Starts the core worker thread
         """
