@@ -1,0 +1,3 @@
+[core]
+db = "/e4efs/data/jobs.db"
+orchestrator = 'https://orchestrator.fishsense.e4e.ucsd.edu'

@@ -1,14 +1,13 @@
 '''Fishsense Data Processing Worker
 '''
-import asyncio
-import datetime as dt
+import signal
+from threading import Event
 
-import pytz
-import tornado
 from prometheus_client import start_http_server
 
-from fishsense_data_processing_worker.config import configure_logging
-from fishsense_data_processing_worker.handlers import HomePageHandler
+from fishsense_data_processing_worker.config import configure_logging, settings
+from fishsense_data_processing_worker.core import Core
+from fishsense_data_processing_worker.downloader import Downloader
 from fishsense_data_processing_worker.metrics import system_monitor_thread
 
 
@@ -18,28 +17,39 @@ class Service:
     # pylint: disable=too-few-public-methods
     # runtime
     def __init__(self):
-        start_time = dt.datetime.now(tz=pytz.UTC)
-        self.stop_event = asyncio.Event()
+        self.stop_event = Event()
         configure_logging()
 
-        self._app = tornado.web.Application([
-            (r'/()', HomePageHandler, {'start_time': start_time})
-        ])
+        self._downloader = Downloader(
+            n_workers=8
+        )
 
-    async def run(self):
+        self.core = Core(
+            orchestrator=settings.core.orchestrator,
+            api_key=settings.core.api_key,
+            worker_name=settings.core.worker_name,
+            downloader=self._downloader
+        )
+        signal.signal(signal.SIGTERM, self.stop_event.set)
+
+    def run(self):
         """Main entry point
         """
         start_http_server(9090)
         system_monitor_thread.start()
-        self._app.listen(80)
+        self.core.start()
+        self._downloader.start()
 
-        await self.stop_event.wait()
+        self.stop_event.wait()
+
+        self._downloader.stop()
+        self.core.stop()
 
 
 def main() -> None:
     """Main entry point
     """
-    asyncio.run(Service().run())
+    Service().run()
 
 
 if __name__ == '__main__':

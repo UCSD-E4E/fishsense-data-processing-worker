@@ -1,6 +1,5 @@
 '''Config
 '''
-
 import logging
 import logging.handlers
 import os
@@ -9,7 +8,7 @@ from pathlib import Path
 from typing import Dict
 
 import platformdirs
-from dynaconf import Dynaconf
+from dynaconf import Dynaconf, Validator
 
 IS_DOCKER = os.environ.get('E4EFS_DOCKER', False)
 platform_dirs = platformdirs.PlatformDirs('e4efs_worker')
@@ -67,7 +66,30 @@ def get_cache_path() -> Path:
 
 
 validators = [
-
+    Validator(
+        'core.db',
+        cast=Path,
+        default=Path('./data/jobs.db')
+    ),
+    Validator(
+        'core.cron',
+        cast=str
+    ),
+    Validator(
+        'core.orchestrator',
+        cast=str,
+        required=True
+    ),
+    Validator(
+        'core.api_key',
+        required=True,
+        cast=str
+    ),
+    Validator(
+        'core.worker_name',
+        required=True,
+        cast=str
+    )
 ]
 
 settings = Dynaconf(

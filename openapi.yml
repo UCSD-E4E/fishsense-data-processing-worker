@@ -1,0 +1,118 @@
+openapi: 3.1.0
+info:
+  title: Fishsense Data Processing Worker
+  description: |-
+    Fishsense Data Processing Worker
+
+  contact:
+    email: e4e@ucsd.edu
+  license:
+    name: UCSD Non-commercial
+    url: https://raw.githubusercontent.com/UCSD-E4E/fishsense-data-processing-worker/refs/heads/main/LICENSE
+  version: 0.0.0
+externalDocs:
+  description: Find out more about the Fishsense Data Processing Worker
+  url: https://github.com/UCSD-E4E/fishsense-data-processing-worker
+servers:
+  - url: http://kastner-ml.ucsd.edu:8080
+tags:
+  - name: job
+    description: Job management
+paths:
+  /process_fsl:
+    put:
+      tags:
+        - job
+      summary: Submit a new job for processing
+      description: Submits a new job for processing in the queue
+      operationId: addJob
+      requestBody:
+        description: Create a new job for processing
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobDefinition'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobIds'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+      # security:
+      #   - petstore_auth:
+      #       - write:pets
+      #       - read:pets
+  /job_status:
+    get:
+      tags:
+        - job
+      summary: Checks job status
+      description: Requests the current job status
+      operationId: getJob
+
+          
+
+components:
+  schemas:
+    JobIds:
+      type: object
+      properties:
+        job_ids:
+          type: array
+          items:
+            type: string
+            description: Job IDs
+    JobDefinition:
+      type: object
+      properties:
+        job:
+          type: array
+          items:
+            type: object
+            properties:
+              display_name:
+                type: string
+              job_name:
+                type: string
+                enum:
+                  - preprocess
+                  - preprocess_with_laser
+              parameters:
+                type: object
+                properties:
+                  overwrite:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: string
+                  lens-calibration:
+                    type: string
+                  format:
+                    type: string
+                    enum:
+                      - JPG
+                      - PNG
+                  output:
+                    type: string
+
+
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
