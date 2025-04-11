@@ -36,7 +36,10 @@ def do_query(path: Union[Path, str], cur: sqlite3.Cursor, params: Dict[str, Any]
             params
         )
 
-def do_seq_query(path: Union[Path, str], cur: sqlite3.Cursor, param_seq: List[Dict[str, Any]]) -> None:
+
+def do_seq_query(path: Union[Path, str],
+                 cur: sqlite3.Cursor,
+                 param_seq: List[Dict[str, Any]]) -> None:
     """Do sequential prepared statement
 
     Args:

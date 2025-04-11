@@ -103,7 +103,8 @@ class Core:
                         )
                         raise exc
 
-    def _preprocess_with_laser(self, job_id: str, frame_ids: List[str], camera_id: int, dive_id: Optional[str]):
+    def _preprocess_with_laser(self, job_id: str, frame_ids: List[str], camera_id: int, _: Optional[str]):
+        # pylint: disable=too-many-locals
         raw_urls = [
             f'{self.__host}/api/v1/data/raw/{frame_id}' for frame_id in frame_ids
         ]
@@ -231,8 +232,8 @@ class Core:
                     }
                 ).raise_for_status()
 
-
-    def _preprocess(self, job_id: str, frame_ids: List[str], camera_id: int, dive_id: Optional[str]):
+    def _preprocess(self, job_id: str, frame_ids: List[str], camera_id: int, _: Optional[str]):
+        # pylint: disable=too-many-locals
         raw_urls = [
             f'{self.__host}/api/v1/data/raw/{frame_id}' for frame_id in frame_ids]
         request_headers = {
@@ -313,8 +314,12 @@ class Core:
 
 
     def start(self):
+        """Starts the core worker thread
+        """
         self._worker_thread.start()
 
     def stop(self):
+        """Stops the core worker thread
+        """
         self.stop_event.set()
         self._worker_thread.join()
