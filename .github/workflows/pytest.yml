@@ -1,6 +1,10 @@
 name: pytest
 
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches:
+      - '*'
+  workflow_dispatch:
 
 jobs:
   build:
