@@ -14,6 +14,19 @@ spec:
       labels:
         app: fishsense-data-processing-worker
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nvidia.com/cuda.runtime.major
+                operator: In
+                values:
+                - "12"
+              - key: nvidia.com/cuda.runtime.minor
+                operator: In
+                values:
+                - "6"
       containers:
         - name: fishsense-data-processing-worker
           image: ghcr.io/ucsd-e4e/fishsense-data-processing-worker:main
