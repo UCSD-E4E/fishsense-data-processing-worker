@@ -17,6 +17,9 @@ spec:
       containers:
         - name: fishsense-data-processing-worker
           image: ghcr.io/ucsd-e4e/fishsense-data-processing-worker:main
+          env:
+            - name: E4EFS_CORE__ORCHESTRATOR
+              value: https://orchestrator.fishsense.e4e.ucsd.edu
           resources:
             limits:
               nvidia.com/gpu: 1
