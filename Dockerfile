@@ -48,7 +48,7 @@ ENV VIRTUAL_ENV=/app/.venv
 ENV PATH="/app/.venv/bin:$PATH"
 ENV E4EFS_DOCKER=true
 
-RUN mkdir -p /e4efs/config /e4efs/logs /e4efs/data /e4efs/cache
+RUN mkdir -p /e4efs/config /e4efs/logs /e4efs/data /e4efs/cache && chown -R ubuntu:ubuntu /e4efs
 COPY sql sql
 USER ubuntu
 ENTRYPOINT ["fsl_worker"]
