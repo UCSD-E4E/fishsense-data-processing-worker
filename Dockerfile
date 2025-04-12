@@ -36,7 +36,7 @@ COPY pyproject.toml poetry.lock /app/
 RUN poetry install --no-root --without dev && rm -rf $POETRY_CACHE_DIR
 
 COPY README.md /app/README.md
-COPY ${PYTHON_PACKAGE} /app/${PYTHON_PACKAGE}
+COPY fishsense_data_processing_worker /app/fishsense_data_processing_worker
 RUN poetry install --only main
 
 ENV VIRTUAL_ENV=/app/.venv
