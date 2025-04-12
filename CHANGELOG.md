@@ -1,6 +1,36 @@
 # CHANGELOG
 
 
+## v0.2.5 (2025-04-12)
+
+### Bug Fixes
+
+- Adds container env
+  ([`bf20794`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/bf207942a6af7f102d611eef05e97800e89faefa))
+
+- Adds CUDA driver affinity
+  ([`cf20587`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/cf20587b91200a5447a589f13147a3fff6f0f231))
+
+- Fixes ownership
+  ([`861ae1f`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/861ae1f66a694878810e3b3046e681b219631e29))
+
+- Switches to latest label
+  ([`526ee5f`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/526ee5f04f2fd57556c2b34c5abc4c259a45e8e9))
+
+### Chores
+
+- Initial k8s deploy
+  ([`1461724`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/1461724294161bede04fbb46d3b9453a82ff9a2e))
+
+- Removes unused settings
+  ([`2fedf64`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/2fedf6400910f022509dcc827a3c6bc5cc3b6327))
+
+### Continuous Integration
+
+- Switching to version label
+  ([`4d0c11b`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/4d0c11b3a02118c6f8c74aaccc78afd888679e3c))
+
+
 ## v0.2.4 (2025-04-12)
 
 ### Bug Fixes
