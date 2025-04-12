@@ -8,7 +8,7 @@ ARG GID=1001
 ARG UID=1001
 ARG CUDA_GROUP_ID=65533
 RUN groupmod -g ${GID} ubuntu && usermod -u ${UID} -g ${GID} ubuntu && groupadd -g ${CUDA_GROUP_ID} cuda
-RUN sudo usermod -aG cuda ubuntu
+RUN usermod -aG cuda ubuntu
 
 RUN mkdir -p ~/.ssh && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
