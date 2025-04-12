@@ -1,9 +1,15 @@
 # CHANGELOG
 
 
+## v0.2.3 (2025-04-12)
+
+
 ## v0.2.2 (2025-04-12)
 
 ### Bug Fixes
+
+- Fixes build
+  ([`d75d376`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/d75d376cc70ab23d35fe124046f424cb199d941c))
 
 - Fixes build from fishsense-docker
   ([`4bd833a`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/4bd833a5a152bbde7abe66b8d7de461103e19795))
