@@ -29,7 +29,7 @@ spec:
                 - "6"
       containers:
         - name: fishsense-data-processing-worker
-          image: ghcr.io/ucsd-e4e/fishsense-data-processing-worker:latest
+          image: ghcr.io/ucsd-e4e/fishsense-data-processing-worker:v0.2.5
           env:
             - name: E4EFS_CORE__ORCHESTRATOR
               value: https://orchestrator.fishsense.e4e.ucsd.edu
