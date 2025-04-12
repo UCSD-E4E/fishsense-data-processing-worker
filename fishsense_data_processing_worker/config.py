@@ -67,15 +67,6 @@ def get_cache_path() -> Path:
 
 validators = [
     Validator(
-        'core.db',
-        cast=Path,
-        default=Path('./data/jobs.db')
-    ),
-    Validator(
-        'core.cron',
-        cast=str
-    ),
-    Validator(
         'core.orchestrator',
         cast=str,
         required=True
