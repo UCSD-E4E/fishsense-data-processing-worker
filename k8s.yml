@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fishsense-data-processing-worker
+  labels:
+    app: fishsense-data-processing-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fishsense-data-processing-worker
+  template:
+    metadata:
+      labels:
+        app: fishsense-data-processing-worker
+    spec:
+      containers:
+        - name: fishsense-data-processing-worker
+          image: ghcr.io/ucsd-e4e/fishsense-data-processing-worker:main
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+              cpu: 4
+              memory: 32G
+            requests:
+              nvidia.com/gpu: 1
+              cpu: 4
+              memory: 32G
