@@ -1,6 +1,9 @@
 # CHANGELOG
 
 
+## v0.3.0 (2025-04-13)
+
+
 ## v0.2.6 (2025-04-13)
 
 ### Bug Fixes
@@ -12,6 +15,11 @@
 
 - Adds secret and worker
   ([`1acd1a2`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/1acd1a27ef316ab41d4559d55da2c1c155324cd4))
+
+### Features
+
+- Allows env set of ray config
+  ([`1563a59`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/1563a594bfaac67f6685c320ffa5a84b95bb95cb))
 
 
 ## v0.2.5 (2025-04-12)
