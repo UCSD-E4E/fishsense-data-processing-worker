@@ -18,12 +18,6 @@ RUN git clone --depth=1 https://github.com/UCSD-E4E/fishsense-lite.git /tmp/git_
 WORKDIR /tmp/fishsense-lite
 RUN . ${HOME}/.cargo/env && pip install .
 
-ARG MAX_CPU=1
-ARG MAX_GPU=1
-
-RUN ${HOME}/.pyenv/shims/fsl generate-ray-config --max-cpu ${MAX_CPU} --max-gpu ${MAX_GPU}
-
-
 WORKDIR /app
 
 # --- Reproduce the environment ---
