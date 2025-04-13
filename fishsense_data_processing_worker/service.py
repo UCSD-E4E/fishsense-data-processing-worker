@@ -21,7 +21,7 @@ class Service:
         configure_logging()
 
         self._downloader = Downloader(
-            n_workers=8
+            n_workers=settings.core.max_cpu
         )
 
         self.core = Core(
