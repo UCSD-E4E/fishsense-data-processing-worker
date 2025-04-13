@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.4.0 (2025-04-13)
+
+### Features
+
+- Adds batch size as env var
+  ([`5b82d27`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/5b82d27401a5e606b6deb17795f433af3939290b))
+
+
 ## v0.3.2 (2025-04-13)
 
 ### Bug Fixes
