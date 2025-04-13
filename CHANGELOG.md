@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.2.6 (2025-04-13)
+
+### Bug Fixes
+
+- Fixes worker name
+  ([`cec80ba`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/cec80ba98cba2ce07a5e45c168f33ddab085a781))
+
+### Continuous Integration
+
+- Adds secret and worker
+  ([`1acd1a2`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/1acd1a27ef316ab41d4559d55da2c1c155324cd4))
+
+
 ## v0.2.5 (2025-04-12)
 
 ### Bug Fixes
