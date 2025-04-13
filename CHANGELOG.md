@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.3.2 (2025-04-13)
+
+### Bug Fixes
+
+- Fixes downloader CPU count
+  ([`2e60b2b`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/2e60b2bfd13f22c59ef4c6400e976a5a22460656))
+
+### Continuous Integration
+
+- Upgrade image
+  ([`cbd7728`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/cbd7728ba2019f36ff083d691e114a519f7f6761))
+
+
 ## v0.3.1 (2025-04-13)
 
 ### Bug Fixes
