@@ -91,6 +91,11 @@ validators = [
         default=1,
         cast=int
     ),
+    Validator(
+        'core.max_batch_size',
+        default=50,
+        cast=int
+    )
 ]
 
 settings = Dynaconf(

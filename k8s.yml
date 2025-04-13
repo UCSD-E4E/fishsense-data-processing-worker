@@ -44,6 +44,8 @@ spec:
               value: "4"
             - name: E4EFS_CORE__MAX_GPU
               value: "1"
+            - name: E4EFS_CORE__MAX_BATCH_SIZE
+              value: "50"
           resources:
             limits:
               nvidia.com/gpu: 1

@@ -23,7 +23,8 @@ class Core:
                  worker_name: str,
                  downloader: Downloader,
                  max_cpu: int = 1,
-                 max_gpu: int = 1
+                 max_gpu: int = 1,
+                 batch_size: int = 50
                  ):
         self._log = logging.getLogger('Core')
         self.__host = orchestrator
@@ -32,7 +33,7 @@ class Core:
         self._downloader = downloader
         self.stop_event = Event()
 
-        self._n_images: int = 50
+        self._n_images: int = batch_size
 
         self._worker_thread = Thread(
             target=self._process_loop,

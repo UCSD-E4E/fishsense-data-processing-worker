@@ -31,6 +31,7 @@ class Service:
             downloader=self._downloader,
             max_cpu=settings.core.max_cpu,
             max_gpu=settings.core.max_gpu,
+            batch_size=settings.core.max_batch_size,
         )
         signal.signal(signal.SIGTERM, self.stop_event.set)
 
