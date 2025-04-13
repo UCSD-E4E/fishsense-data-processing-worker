@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.3.1 (2025-04-13)
+
+### Bug Fixes
+
+- Removes builtin ray config
+  ([`562fc47`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/562fc476b687cb895e4e468de8d68666b8933178))
+
+
 ## v0.3.0 (2025-04-13)
 
 
