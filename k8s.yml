@@ -33,6 +33,13 @@ spec:
           env:
             - name: E4EFS_CORE__ORCHESTRATOR
               value: https://orchestrator.fishsense.e4e.ucsd.edu
+            - name: E4EFS_CORE__API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: fishense-data-processing-worker-orchestrator-api-key
+                  key: api-key
+            - name: E4EFS_CORE__WORKER
+              value: nrp-worker
           resources:
             limits:
               nvidia.com/gpu: 1
