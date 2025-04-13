@@ -29,7 +29,7 @@ spec:
                 - "6"
       containers:
         - name: fishsense-data-processing-worker
-          image: ghcr.io/ucsd-e4e/fishsense-data-processing-worker:v0.2.5
+          image: ghcr.io/ucsd-e4e/fishsense-data-processing-worker:v0.3.0
           env:
             - name: E4EFS_CORE__ORCHESTRATOR
               value: https://orchestrator.fishsense.e4e.ucsd.edu
@@ -40,6 +40,10 @@ spec:
                   key: api-key
             - name: E4EFS_CORE__WORKER_NAME
               value: nrp-worker
+            - name: E4EFS_CORE__MAX_CPU
+              value: "4"
+            - name: E4EFS_CORE__MAX_GPU
+              value: "1"
           resources:
             limits:
               nvidia.com/gpu: 1

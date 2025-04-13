@@ -28,7 +28,9 @@ class Service:
             orchestrator=settings.core.orchestrator,
             api_key=settings.core.api_key,
             worker_name=settings.core.worker_name,
-            downloader=self._downloader
+            downloader=self._downloader,
+            max_cpu=settings.core.max_cpu,
+            max_gpu=settings.core.max_gpu,
         )
         signal.signal(signal.SIGTERM, self.stop_event.set)
 

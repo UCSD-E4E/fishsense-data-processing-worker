@@ -21,7 +21,9 @@ class Core:
                  orchestrator: str,
                  api_key: str,
                  worker_name: str,
-                 downloader: Downloader
+                 downloader: Downloader,
+                 max_cpu: int = 1,
+                 max_gpu: int = 1
                  ):
         self._log = logging.getLogger('Core')
         self.__host = orchestrator
@@ -43,8 +45,20 @@ class Core:
             'preprocess': self._preprocess,
             'preprocess_with_laser': self._preprocess_with_laser
         }
+        self._max_cpu = max_cpu
+        self._max_gpu = max_gpu
 
     def _process_loop(self):
+        result = subprocess.run(
+            ['fsl', 'generate-ray-config', '--max-cpu',
+                str(self._max_cpu), '--max-gpu', str(self._max_gpu)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            check=False
+        )
+        self._log.debug('Subprocess output: %s', result.stdout.decode())
+        result.check_returncode()
+        self._log.debug('Ray config generated')
         while not self.stop_event.is_set():
             # Get next set of jobs
             with requests.Session() as session:

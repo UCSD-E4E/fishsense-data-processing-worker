@@ -80,7 +80,17 @@ validators = [
         'core.worker_name',
         required=True,
         cast=str
-    )
+    ),
+    Validator(
+        'core.max_cpu',
+        default=1,
+        cast=int
+    ),
+    Validator(
+        'core.max_gpu',
+        default=1,
+        cast=int
+    ),
 ]
 
 settings = Dynaconf(
