@@ -5,6 +5,7 @@
         "ms-toolsai.jupyter",
         "njpwerner.autodocstring",
         "ms-python.isort",
-        "ms-python.autopep8"
+        "ms-python.autopep8",
+        "ms-kubernetes-tools.vscode-kubernetes-tools"
     ]
 }
