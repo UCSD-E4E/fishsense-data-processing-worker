@@ -1,6 +1,31 @@
 # CHANGELOG
 
 
+## v0.4.1 (2025-04-15)
+
+### Bug Fixes
+
+- Adds bailout to session.put
+  ([`be549fa`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/be549fac6923da7b6dbabe0a0a9ec8f4e14da69e))
+
+### Continuous Integration
+
+- Increases batch size
+  ([`82ada45`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/82ada450d0b7c1cffce24eb9527e08fb93028758))
+
+- Increases batch size to 300
+  ([`8cf26a4`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/8cf26a4bc36f53b73cd210cc52a7dadbeca89c31))
+
+- Increases batch size to 450
+  ([`1c45026`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/1c450261ef74fa5ead1e5beae1ff681aa2f3a9ce))
+
+- Updates deploy
+  ([`3424d4e`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/3424d4ea9523d532538d6000a54f2a36e5ba4438))
+
+- Updates resources requests
+  ([`8eeef4b`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/8eeef4b1a59400451df71e09cd52f288db238001))
+
+
 ## v0.4.0 (2025-04-13)
 
 ### Features
