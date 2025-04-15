@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.4.3 (2025-04-15)
+
+### Bug Fixes
+
+- Adds sleep for no job
+  ([`b9ab587`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/b9ab587ac42b2804dca6e4b1e888582cd32033fc))
+
+
 ## v0.4.2 (2025-04-15)
 
 ### Bug Fixes
