@@ -105,17 +105,22 @@ class Core:
                         process_fn(job_id, frame_ids, camera_id, dive_id)
                     except Exception as exc:
                         self._log.exception('Failed: %s', exc)
-                        session.put(
-                            url=f'{self.__host}/api/v1/jobs/status',
-                            params={
-                                'jobId': job_id,
-                                # TODO switch to failed later, this only for dev
-                                'status': 'cancelled'
-                            },
-                            headers={
-                                'api_key': self.__key
-                            }
-                        )
+                        try:
+                            session.put(
+                                url=f'{self.__host}/api/v1/jobs/status',
+                                params={
+                                    'jobId': job_id,
+                                    # TODO switch to failed later, this only for dev
+                                    'status': 'cancelled'
+                                },
+                                headers={
+                                    'api_key': self.__key
+                                }
+                            )
+                        except requests.RequestException as exc:
+                            self._log.exception(
+                                'Failed to update job status: %s', exc)
+                            continue
                         raise exc
 
     def _preprocess_with_laser(self, job_id: str, frame_ids: List[str], camera_id: int, _: Optional[str]):
