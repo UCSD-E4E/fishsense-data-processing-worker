@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v0.4.2 (2025-04-15)
+
+### Bug Fixes
+
+- Updates job fail behavior
+  ([`6ca3d38`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/6ca3d3886600871bfc339615e02c4d5da8eabc28))
+
+### Chores
+
+- Adds k8s tooling
+  ([`d03ee90`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/d03ee9087bab630210042751f5b081013e19a7bd))
+
+### Continuous Integration
+
+- Updates deploy
+  ([`9440349`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/9440349ccdabc6bef803cb564331a52ffbf73ca4))
+
+
 ## v0.4.1 (2025-04-15)
 
 ### Bug Fixes
