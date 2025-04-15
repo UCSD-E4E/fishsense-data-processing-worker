@@ -82,6 +82,9 @@ class Core:
                     continue
                 job_definition: Dict = response.json()
                 jobs: List[Dict] = job_definition['jobs']
+                if len(jobs) == 0:
+                    self.stop_event.wait(60)
+                    continue
                 for job in jobs:
                     job_id: str = job['jobId']
                     frame_ids: List[str] = job['frameIds']
