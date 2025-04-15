@@ -111,17 +111,15 @@ class Core:
                                 params={
                                     'jobId': job_id,
                                     # TODO switch to failed later, this only for dev
-                                    'status': 'cancelled'
+                                    'status': 'failed'
                                 },
                                 headers={
                                     'api_key': self.__key
                                 }
                             )
-                        except requests.RequestException as exc:
+                        except requests.RequestException as nexc:
                             self._log.exception(
-                                'Failed to update job status: %s', exc)
-                            continue
-                        raise exc
+                                'Failed to update job status: %s', nexc)
 
     def _preprocess_with_laser(self, job_id: str, frame_ids: List[str], camera_id: int, _: Optional[str]):
         # pylint: disable=too-many-locals
