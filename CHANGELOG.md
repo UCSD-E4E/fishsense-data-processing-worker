@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.4.4 (2025-04-16)
+
+### Bug Fixes
+
+- Adds backoff for downloading
+  ([`106f725`](https://github.com/UCSD-E4E/fishsense-data-processing-worker/commit/106f7255e0c9356fd580c3c55178689c99e9acc6))
+
+
 ## v0.4.3 (2025-04-15)
 
 ### Bug Fixes
