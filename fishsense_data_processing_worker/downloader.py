@@ -17,6 +17,8 @@ class Downloader:
     """
     def __init__(self,
                  n_workers: int = 8,
+                 retries: int = 3,
+                 retry_delay: float = 1.0
                  ):
         """Initializes the parallel downloader
 
@@ -29,6 +31,8 @@ class Downloader:
         self._log = logging.getLogger('Downloader')
         self.workers_ready = Event()
         self._workers: List[Thread] = []
+        self._retries = retries
+        self._retry_delay = retry_delay
 
     def _download_worker(self):
         thread_handle = current_thread()
@@ -40,20 +44,22 @@ class Downloader:
             except Empty:
                 continue
             _log.debug('Trying %s', url)
-            try:
-                with requests.session() as session:
-                    req = session.get(
-                        url=url,
-                        headers=request_headers
-                    )
-                    req.raise_for_status()
-                    with open(output_path, 'wb') as handle:
-                        handle.write(req.content)
-            except requests.exceptions.RequestException as exc:
-                self._log.exception('Downloading %s failed: %s',
-                                    url, exc)
-            finally:
-                self._job_pickup_queue.task_done()
+            for idx in range(self._retries):
+                try:
+                    with requests.session() as session:
+                        req = session.get(
+                            url=url,
+                            headers=request_headers
+                        )
+                        req.raise_for_status()
+                        with open(output_path, 'wb') as handle:
+                            handle.write(req.content)
+                    break
+                except requests.exceptions.RequestException as exc:
+                    self._log.exception('Downloading %s attempt %d failed: %s',
+                                        url, idx, exc)
+                    self.stop_event.wait(self._retry_delay)
+            self._job_pickup_queue.task_done()
 
 
     def start(self):
