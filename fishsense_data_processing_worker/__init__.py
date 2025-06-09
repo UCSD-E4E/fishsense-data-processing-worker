@@ -1,3 +1,3 @@
 '''Fishsense Data Processing Working
 '''
-__version__ = '0.4.4'
+__version__ = '1.0.0'
