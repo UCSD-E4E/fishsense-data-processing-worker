@@ -21,7 +21,7 @@ humanfriendly = "^10.0"
 platformdirs = "^4.3.6"
 schema = "^0.7.7"
 pycron = "^3.1.2"
-requests = "^2.32.3"
+requests = "^2.32.4"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^3.2.7"
